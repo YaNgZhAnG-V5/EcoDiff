@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="DESCRIPTION META TAG">
+  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
+  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
+  <meta property="og:url" content="URL OF THE WEBSITE"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
+  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>Effortless Efficiency: Low-Cost Pruning of Diffusion Models</title>
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+  <!-- MathJax for LaTeX equations -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+  
+  <!-- Additional styles -->
+  <style>
+      .equation {
+          text-align: center;
+          margin: 20px 0;
+      }
+      .code {
+          background-color: #F4F6F6;
+          padding: 10px;
+          border-left: 3px solid #2E4053;
+          font-family: 'Courier New', monospace;
+          overflow-x: auto;
+      }
+  </style>
+</head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Effortless Efficiency:<br>Low-Cost Pruning of Diffusion Models</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="#" target="_blank">Yang Zhang</a><sup>1,*</sup>,</span>
+                <span class="author-block">
+                  <a href="#" target="_blank">Er Jin</a><sup>2,*</sup>,</span>
+                  <span class="author-block">
+                    <a href="#" target="_blank">Yanfei Dong</a><sup>1</sup>,</span>
+                    <span class="author-block">
+                      <a href="#" target="_blank">Ashkan Khakzar</a><sup>3</sup>,</span>
+                      <span class="author-block">
+                        <a href="#" target="_blank">Philip Torr</a><sup>3</sup>,</span>
+                        <span class="author-block">
+                          <a href="#" target="_blank">Johannes Stegmaier</a><sup>2</sup>,</span>
+                          <span class="author-block">
+                            <a href="#" target="_blank">Kenji Kawaguchi</a><sup>1</sup>
+                          </span>
+                        </div>
+
+                        <div class="is-size-5 publication-authors">
+                          <span class="author-block">
+                            <sup>1</sup>National University of Singapore,
+                            <sup>2</sup>RWTH Aachen University,
+                            <sup>3</sup>University of Oxford
+                            <br>
+                            <span class="eql-cntrb"><small><sup>*</sup>Indicates Equal Contribution</small></span>
+                          </span>
+                        </div>
+
+                        <div class="column has-text-centered">
+                          <div class="publication-links">
+                               <!-- Arxiv PDF link -->
+                            <span class="link-block">
+                              <a href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf" target="_blank"
+                              class="external-link button is-normal is-rounded is-dark">
+                              <span class="icon">
+                                <i class="fas fa-file-pdf"></i>
+                              </span>
+                              <span>Paper</span>
+                            </a>
+                          </span>
+
+                          <!-- Supplementary PDF link -->
+                          <!-- <span class="link-block"> -->
+                            <!-- <a href="static/pdfs/supplementary_material.pdf" target="_blank" -->
+                            <!-- class="external-link button is-normal is-rounded is-dark"> -->
+                            <!-- <span class="icon"> -->
+                              <!-- <i class="fas fa-file-pdf"></i> -->
+                            <!-- </span> -->
+                            <!-- <span>Supplementary</span> -->
+                          <!-- </a> -->
+                        <!-- </span> -->
+
+                        <!-- Github link -->
+                        <span class="link-block">
+                          <a href="https://github.com/YaNgZhAnG-V5/EcoDiff" target="_blank"
+                          class="external-link button is-normal is-rounded is-dark">
+                          <span class="icon">
+                            <i class="fab fa-github"></i>
+                          </span>
+                          <span>Code</span>
+                        </a>
+                      </span>
+
+                      <!-- ArXiv abstract Link -->
+                      <span class="link-block">
+                        <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-play-circle"></i>
+                        </span>
+                        <span>Demo</span>
+                      </a>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser GIF-->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      
+      <div id="results-carousel">
+       <div class="item">
+        <!-- Your image here -->
+        
+        <center></center>
+          <img src="static/images/demo_figures.jpg" alt="MY ALT TEXT"/>
+        </center>
+        
+        <h4 class="subtitle is-6 has-text-centered" style="margin-top: 0.5em; color: gray; font-size: small;"">
+             Results on Pruned SDXL and FLUX. <b>No retraining</b> is performed after pruning.
+        </h4>
+      </div>
+      
+    </div>
+  </div>
+</div>
+</div>
+</section>
+<!-- End teaser video -->
+<!-- Teaser video-->
+<!-- <section class="hero teaser"> -->
+  <!-- <div class="container is-max-desktop"> -->
+    <!-- <div class="hero-body"> -->
+      <!-- <video poster="" id="tree" autoplay controls muted loop height="100%"> -->
+        <!-- Your video here -->
+        <!-- <source src="static/videos/banner_video.mp4" -->
+        <!-- type="video/mp4"> -->
+      <!-- </video> -->
+      <!-- <h2 class="subtitle has-text-centered"> -->
+        <!-- Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus.  -->
+      <!-- </h2> -->
+    <!-- </div> -->
+  <!-- </div> -->
+<!-- </section> -->
+<!-- End teaser video -->
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Diffusion models have achieved impressive advancements in various vision tasks. However, these gains often rely on increasing model size, 
+            which escalates computational complexity and memory demands, complicating deployment, raising inference costs, and causing environmental impact. 
+            While some studies have explored pruning techniques to improve the memory efficiency of diffusion models, 
+            most existing methods require extensive retraining to retain the model performance. 
+            Retraining a modern large diffusion model is extremely costly and resource-intensive, which limits the practicality of these methods.
+            In this work, we achieve <b>low-cost diffusion pruning without retraining</b> by proposing a 
+            model-agnostic structural pruning framework for diffusion models that learns a differentiable mask to sparsify the model. 
+            To ensure effective pruning that preserves the quality of the final denoised latent, we design a novel <b>end-to-end pruning</b> objective 
+            that spans the entire diffusion process. As end-to-end pruning is memory-intensive, we further propose <b>time step gradient checkpointing</b>, 
+            a technique that significantly reduces memory usage during optimization, enabling end-to-end pruning within a limited memory budget.
+            Results on <b>state-of-the-art</b> U-Net diffusion models <b>SDXL</b> and diffusion transformers (<b>FLUX</b>) demonstrate that our method can 
+            effectively prune up to <b>20%</b> parameters with minimal perceptible performance degradation—and notably, without the need for model retraining. 
+            We also showcase that our method can still prune on top of time step distilled diffusion models.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+<!-- Method -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-text-centered">
+          <h2 class="title is-3" style="text-align: center;">Method</h2>
+          <p>
+            Our pruning method, <b>EcoDiff</b>, achieves efficient yet effective pruning through two key innovations: end-to-end pruning and time step gradient checkpointing.
+          </p>
+          <div class="content has-text-justified">
+            <div class="columns is-centered">
+              <div class="column is-8">
+                <img src="static/images/method.jpg" alt="Overview of our pruning method"/>
+                <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
+                    Overview of our method.<br/>
+                    Left: End-to-end pruning considers the entire diffusion process.<br/>
+                    Right: Time step gradient checkpointing reduces memory usage during end-to-end optimization.
+                </h4>
+              </div>
+            </div>
+            <h2>End-to-End Pruning Objective</h2>
+            <p>
+              To mitigate the error accumulation inherent in conventional diffusion model pruning, we propose an end-to-end pruning objective that considers the entire denoising process. Our goal is to learn masking parameters \(\boldsymbol{\mathcal{M}}\) that minimize the difference between the final denoised latent \(z_0\) produced by the original denoising model \(\epsilon_{\theta}\) and the predicted \(\hat{z}_0\) from the masked model \(\epsilon_{\theta}^{\text{mask}}\), under the same initial noise \(z_T\) and conditioning input \(y\). The pruning objective is formulated as:
+            </p>
+            <div class="equation">
+              \[
+              \arg\min_{\boldsymbol{\mathcal{M}}} \mathbb{E}_{z_T, y \sim \mathcal{C}} \left[ \left\| \mathcal{F}_{\epsilon_{\theta}}(z_T, y) - \mathcal{F}_{\epsilon_{\theta}^{\text{mask}}}(z_T, y, \boldsymbol{\mathcal{M}}) \right\|_2 \right] + \beta \| \boldsymbol{\mathcal{M}} \|_0,
+              \]
+            </div>
+            <p>
+              where \(\mathcal{F}\) denotes the full denoising process, \(\mathcal{C}\) is the dataset of conditioning inputs, 
+              and \(\beta\) is a regularization coefficient promoting sparsity via the \(L_0\) norm of \(\boldsymbol{\mathcal{M}}\). 
+              To make optimization tractable, we apply a continuous relaxation of the discrete masks using hard-concrete distributions, 
+              allowing gradient-based optimization of continuous mask variables \(\boldsymbol{\lambda}\). 
+              The continuous mask \(\hat{\mathcal{M}}\) is then obtained by a mask parameter \(\boldsymbol{\lambda}\). 
+              The final pruning loss given mask parameters \(\boldsymbol{\lambda}\) becomes:
+            </p>
+            <!-- <div class="equation">
+                \[
+                \begin{align}
+                    s & = \sigma\left( \frac{\log(u + \delta) - \log(1 - u + \delta)  + \lambda}{\alpha} \right),\\
+                    \bar{s} &= s (\zeta - \gamma) + \gamma, \\
+                    \hat{\mathcal{M}} &= \min(1, \max(0, \bar{s})).
+                \end{align}
+                \]
+            </div> -->
+            <div class="equation">
+              \[
+              \mathcal{L}(\boldsymbol{\lambda}) = \mathcal{L}_E(\boldsymbol{\lambda}) + \beta \| \boldsymbol{\lambda} \|_1,
+              \]
+            </div>
+            <p>
+              where \(\mathcal{L}_E\) is the reconstruction loss between \(z_0\) and \(\hat{z}_0\), and \(\| \boldsymbol{\lambda} \|_1\) approximates the sparsity penalty. After optimization, we threshold \(\boldsymbol{\lambda}\) to obtain the final discrete masks \(\boldsymbol{\mathcal{M}}\), achieving effective structural pruning.
+            </p>
+            <h2>Time Step Gradient Checkpointing</h2>
+            <p>
+              Optimizing the end-to-end pruning objective requires backpropagating through all diffusion steps, which is memory-intensive due to the need to store intermediate activations at each step. To address this, we introduce a time step gradient checkpointing technique that significantly reduces memory consumption. Instead of storing all intermediate variables, we only retain the denoised latent variables \(\hat{z}_t\) after each denoising step. During backpropagation, we recompute necessary intermediate activations on-the-fly using the stored \(\hat{z}_t\) as checkpoints. This method reduces the memory complexity from \(O(T)\) to \(O(1)\), where \(T\) is the number of diffusion steps, while maintaining the runtime complexity at \(O(T)\). The approach enables efficient scaling to large diffusion models by balancing memory savings with computational efficiency, allowing for the practical optimization of the pruning masks across the entire denoising process.
+            </p>
+            <div class="columns is-centered">
+              <div class="column is-8">
+                <img src="static/images/checkpointing.png" alt="Time step gradient checkpointing"/>
+                <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
+                  Runtime and memory usage with time step gradient checkpointing. Time step gradient checkpointing reduces memory usage from \(O(T)\) to \(O(1)\) while maintaining the runtime complexity at \(O(T)\).
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Method -->
+
+<!-- Results -->
+<section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-text-centered">
+          <h2 class="title is-3" style="text-align: center;">Results</h2>
+          <div class="content has-text-justified">
+            <h3 class="title is-4">Compatibility with Other State-of-the-Art Acceleration Methods</h3>
+
+            <h4>1. Compatibility with Time-Step Distillation</h4>
+            <p>
+              Our pruning approach is not limited to standard diffusion models; it can also be effectively applied to time-step distilled models. Time-step distillation reduces the number of diffusion steps required during inference, leading to faster image generation. By integrating our structural pruning method with time-step distilled models, we can further compress the model while benefiting from accelerated sampling. This combination allows us to maintain high-quality image generation with reduced computational resources, demonstrating the flexibility and broad applicability of EcoDiff.
+            </p>
+
+            <div class="columns is-centered">
+              <div class="column is-6">
+                <div class="content has-text-centered">
+                  <div class="columns is-centered">
+                    <div class="column">
+                      <img src="static/images/distillation.jpg" alt="distillation" style="width: 100%;">
+                      <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
+                        We show that our method can prune on top of time-step distilled diffusion models to further accelerate the sampling process and reduce the memory requirements.
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h4>2. Compatibility with Feature Reuse</h4>  
+            <p>
+              After pruning, our models remain fully compatible with caching methods designed to speed up inference, such as DeepCache and other caching strategies. These methods work by reusing computations across diffusion steps, thereby reducing redundant calculations. Since our pruning technique focuses on structurally reducing model parameters without altering the underlying architecture or input-output dimensions, it does not interfere with caching mechanisms. This compatibility means that our pruning method is orthogonal to other acceleration techniques; it can be combined with caching and potentially other optimizations to achieve even greater efficiency gains. Users can leverage the strengths of both approaches to enhance performance without compromising on the quality of the generated images.
+            </p>
+
+            <div class="columns is-centered">
+              <div class="column is-6">
+                <div class="content has-text-centered">
+                  <div class="columns is-centered">
+                    <div class="column">
+                      <img src="static/images/deepcache.jpg" alt="deepcache" style="width: 100%;">
+                      <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
+                        We show that after pruning, the pruned model can still effectively utilize cached methods to further accelerate the sampling process.
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="title is-4">Prune Improves Semantic Fidelity</h3>
+            <p>
+              Interestingly, pruning not only reduces model complexity but can also enhance the semantic alignment of generated images with the conditioning inputs. By selectively removing redundant or less significant neurons, pruning can eliminate noise and focus the model's capacity on essential features that contribute to semantic understanding. This refinement leads to sharper attention mechanisms and more precise feature representations, allowing the pruned model to follow input prompts more faithfully. Empirical observations demonstrate that pruned models often produce images that better capture the intended semantics, resulting in outputs that are not only computationally efficient but also qualitatively superior in adhering to the provided descriptions.
+            </p>
+            <div class="columns is-centered">
+              <div class="column is-8">
+                <div class="content has-text-centered">
+                  <div class="columns is-centered">
+                    <div class="column">
+                      <img src="static/images/semantic.jpg" alt="semantic" style="width: 100%;">
+                      <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
+                        We observe some times the pruned model can generate images with better semantic fidelity, <br/>as the example shows below in the second row (cat -> dog).
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <h3 class="title is-4">Retraining After Pruning</h3>
+            <p>
+              While our pruning method effectively maintains model performance without necessitating retraining, we also explore the benefits of light retraining to achieve even greater compression. Specifically, we conduct an experiment where we retrain a pruned SDXL model for 10,000 steps using only 100 training samples. This minimal retraining effort, which requires approximately 12 hours on an A100 GPU, allows the model to adjust to the pruned architecture and enhances its performance. The results show that even with such a modest retraining regimen, the model can further improve in efficiency without compromising image quality, highlighting the potential of combining pruning with targeted retraining for optimal results.            </p>
+            <div class="columns is-centered">
+              <div class="column is-8">
+                <div class="content has-text-centered">
+                  <div class="columns is-centered">
+                    <div class="column">
+                      <img src="static/images/retrain.jpg" alt="retrain" style="width: 100%;">
+                      <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
+                        Pruning after retraining. Though our method achieves effective pruning with <b>no retraining</b>, we show that with light retraining, the pruned model can heal the performance loss. Hence, our method can incoorperate post-pruning retraining to further prune the model.
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Results -->
+
+
+
+
+<!-- Youtube video -->
+<!-- <section class="hero is-small is-light"> -->
+  <!-- <div class="hero-body"> -->
+    <!-- <div class="container"> -->
+      <!-- Paper video. -->
+      <!-- <h2 class="title is-3">Video Presentation</h2> -->
+      <!-- <div class="columns is-centered has-text-centered"> -->
+        <!-- <div class="column is-four-fifths"> -->
+          
+          <!-- <div class="publication-video"> -->
+            <!-- Youtube embed code here -->
+            <!-- <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe> -->
+          <!-- </div> -->
+        <!-- </div> -->
+      <!-- </div> -->
+    <!-- </div> -->
+  <!-- </div> -->
+<!-- </section> -->
+<!-- End youtube video -->
+
+
+<!-- Video carousel -->
+<!-- <section class="hero is-small"> -->
+  <!-- <div class="hero-body"> -->
+    <!-- <div class="container"> -->
+      <!-- <h2 class="title is-3">Another Carousel</h2> -->
+      <!-- <div id="results-carousel" class="carousel results-carousel"> -->
+        <!-- <div class="item item-video1"> -->
+          <!-- <video poster="" id="video1" autoplay controls muted loop height="100%"> -->
+            <!-- Your video file here -->
+            <!-- <source src="static/videos/carousel1.mp4" -->
+            <!-- type="video/mp4"> -->
+          <!-- </video> -->
+        <!-- </div> -->
+        <!-- <div class="item item-video2"> -->
+          <!-- <video poster="" id="video2" autoplay controls muted loop height="100%"> -->
+            <!-- Your video file here -->
+            <!-- <source src="static/videos/carousel2.mp4" -->
+            <!-- type="video/mp4"> -->
+          <!-- </video> -->
+        <!-- </div> -->
+        <!-- <div class="item item-video3"> -->
+          <!-- <video poster="" id="video3" autoplay controls muted loop height="100%"> -->
+            <!-- Your video file here -->
+            <!-- <source src="static/videos/carousel3.mp4" -->
+            <!-- type="video/mp4"> -->
+          <!-- </video> -->
+        <!-- </div> -->
+      <!-- </div> -->
+    <!-- </div> -->
+  <!-- </div> -->
+<!-- </section> -->
+<!-- End video carousel -->
+
+
+
+<!-- Image carousel -->
+<!-- <section class="hero is-small"> -->
+  <!-- <div class="hero-body"> -->
+    <!-- <div class="container"> -->
+      <!-- <h2 class="title is-3" style="text-align: center;">Additional Examples </h2> -->
+      <!-- <div id="results-carousel" class="carousel results-carousel"> -->
+       <!-- <div class="item"> -->
+        <!-- Your image here -->
+        <!-- <img src="static/images/carousel1.jpg" alt="MY ALT TEXT"/> -->
+        <!-- <h2 class="subtitle has-text-centered"> -->
+          <!-- First image description. -->
+        <!-- </h2> -->
+      <!-- </div> -->
+      <!-- <div class="item"> -->
+        <!-- Your image here -->
+        <!-- <img src="static/images/carousel2.jpg" alt="MY ALT TEXT"/> -->
+        <!-- <h2 class="subtitle has-text-centered"> -->
+          <!-- Second image description. -->
+        <!-- </h2> -->
+      <!-- </div> -->
+      <!-- <div class="item"> -->
+        <!-- Your image here -->
+        <!-- <img src="static/images/carousel3.jpg" alt="MY ALT TEXT"/> -->
+        <!-- <h2 class="subtitle has-text-centered"> -->
+         <!-- Third image description. -->
+       <!-- </h2> -->
+     <!-- </div> -->
+     <!-- <div class="item"> -->
+      <!-- Your image here -->
+      <!-- <img src="static/images/carousel4.jpg" alt="MY ALT TEXT"/> -->
+      <!-- <h2 class="subtitle has-text-centered"> -->
+        <!-- Fourth image description. -->
+      <!-- </h2> -->
+      <!-- </div> -->
+    <!-- </div> -->
+    <!-- </div> -->
+  <!-- </div> -->
+<!-- </section> -->
+<!-- End image carousel -->
+
+
+<!-- Paper poster -->
+<!-- <section class="hero is-small is-light"> -->
+  <!-- <div class="hero-body"> -->
+    <!-- <div class="container"> -->
+      <!-- <h2 class="title">Poster</h2> -->
+
+      <!-- <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
+          </iframe> -->
+        
+      <!-- </div> -->
+    <!-- </div> -->
+  <!-- </section> -->
+<!--End paper poster -->
+
+
+<!--BibTex citation -->
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>BibTex Code Here</code></pre>
+    </div>
+</section>
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>
