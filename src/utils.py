@@ -4,8 +4,9 @@ from typing import Optional
 
 import torch
 from diffusers.models.activations import GEGLU, GELU
-from cross_attn_hook import CrossAttentionExtractionHook
-from ffn_hooker import FeedForwardHooker
+from src.cross_attn_hook import CrossAttentionExtractionHook
+from src.ffn_hooker import FeedForwardHooker
+
 
 # create dummy module for skip connection
 class SkipConnection(torch.nn.Module):
@@ -14,6 +15,7 @@ class SkipConnection(torch.nn.Module):
 
     def forward(*args, **kwargs):
         return args[1]
+
 
 def calculate_mask_sparsity(hooker, threshold: Optional[float] = None):
     total_num_lambs = 0
@@ -29,7 +31,7 @@ def calculate_mask_sparsity(hooker, threshold: Optional[float] = None):
             num_activate_lambs += (lamb >= threshold).sum().item()
     return total_num_lambs, num_activate_lambs, num_activate_lambs / total_num_lambs
 
-    
+
 def create_pipeline(
     pipe,
     model_id,
@@ -208,6 +210,7 @@ def ffn_linear_layer_pruning(module, lamb):
 
     return module
 
+
 def get_save_pts(save_pt):
     if "ff.pt" in save_pt:
         ff_save_pt = deepcopy(save_pt)  # avoid in-place operation
@@ -235,6 +238,7 @@ def get_save_pts(save_pt):
             "attn": attn_save_pt,
             "norm": norm_save_pt,
         }
+
 
 def save_img(pipe, g_cpu, steps, prompt, save_path):
     image = pipe(prompt, generator=g_cpu, num_inference_steps=steps)

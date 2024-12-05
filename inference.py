@@ -1,16 +1,15 @@
 import os
-import shutil
 
 import torch
 from tqdm import tqdm
 
 import argparse
-from .utils import (
-    create_pipeline, 
-    save_img, 
-    calculate_mask_sparsity, 
-    ffn_linear_layer_pruning, 
-    linear_layer_pruning
+from src.utils import (
+    create_pipeline,
+    save_img,
+    calculate_mask_sparsity,
+    ffn_linear_layer_pruning,
+    linear_layer_pruning,
 )
 from diffusers import StableDiffusionXLPipeline
 
@@ -20,7 +19,6 @@ def binary_mask_eval(args):
     pipe = StableDiffusionXLPipeline.from_pretrained(
         "stabilityai/stable-diffusion-xl-base-1.0", torch_dtype=torch.bfloat16
     ).to(args.device)
-    
 
     device = args.device
     torch_dtype = torch.bfloat16 if args.mix_precision == "bf16" else torch.float32
@@ -37,7 +35,7 @@ def binary_mask_eval(args):
         return_hooker=True,
         scope=args.scope,
         ratio=args.ratio,
-    ) 
+    )
     # get mask sparsity
     threshold = None if args.binary else args.lambda_threshold
     threshold = None if args.scope is not None else threshold
@@ -49,7 +47,7 @@ def binary_mask_eval(args):
             f"total num heads: {total_num_heads},"
             + f"num activate heads: {num_activate_heads}, mask sparsity: {mask_sparsity}"
         )
-    
+
     # remove parameters in attention blocks
     cross_attn_hooker = hookers[0]
     for name in tqdm(cross_attn_hooker.hook_dict.keys(), desc="Pruning"):
@@ -100,7 +98,6 @@ def binary_mask_eval(args):
     del module
     del parent_module
 
-    
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir, exist_ok=True)
 
@@ -109,20 +106,21 @@ def binary_mask_eval(args):
         g_cpu = torch.Generator(device).manual_seed(seed)
         # diffusion image
         save_img(
-           pipe=pipe,
-           g_cpu=g_cpu, 
-           steps=args.num_intervention_steps,
-           prompt=p,
-           save_path=os.path.join(args.output_dir, f"original_seed_{seed}_prompt_{p}.png"),
+            pipe=pipe,
+            g_cpu=g_cpu,
+            steps=args.num_intervention_steps,
+            prompt=p,
+            save_path=os.path.join(args.output_dir, f"original_seed_{seed}_prompt_{p}.png"),
         )
 
         save_img(
-           pipe=mask_pipe,
-           g_cpu=g_cpu, 
-           steps=args.num_intervention_steps,
-           prompt=p,
-           save_path=os.path.join(args.output_dir, f"ecodiff_seed_{seed}_prompt_{p}.png"),
+            pipe=mask_pipe,
+            g_cpu=g_cpu,
+            steps=args.num_intervention_steps,
+            prompt=p,
+            save_path=os.path.join(args.output_dir, f"ecodiff_seed_{seed}_prompt_{p}.png"),
         )
+
 
 def main(args):
     binary_mask_eval(args)
@@ -156,17 +154,19 @@ if __name__ == "__main__":
             "A snowy forest with trees covered in sparkling frost",
             "A steampunk airship flying over a bustling city",
             "A tiger walking through a glowing jungle",
-            "An underwater palace illuminated by bioluminescent creatures"
+            "An underwater palace illuminated by bioluminescent creatures",
         ],
         help="prompts for the model eval",
     )
     parser.add_argument("--mix_precision", type=str, default="bf16", help="mixed precision, available bf16")
     parser.add_argument("--num_intervention_steps", "-ni", type=int, default=50, help="number of intervention steps")
     parser.add_argument("--model", type=str, default="sdxl", help="model type, available sdxl, sd2")
-    parser.add_argument("--binary", action="store_true", help="whether to use binary mask") 
+    parser.add_argument("--binary", action="store_true", help="whether to use binary mask")
     parser.add_argument("--masking", type=str, default="binary", help="masking type")
     parser.add_argument("--scope", type=str, default="global", help="scope for lambda binary mask")
-    parser.add_argument("--ratio", type=float, nargs="+", default=[0.68, 0.88], help="sparsity ratio for local global lambda mask")
+    parser.add_argument(
+        "--ratio", type=float, nargs="+", default=[0.68, 0.88], help="sparsity ratio for local global lambda mask"
+    )
     parser.add_argument("--width", type=int, default=None)
     parser.add_argument("--height", type=int, default=None)
     parser.add_argument("--epsilon", "-e", type=float, default=0.0, help="epsilon for lambda")
