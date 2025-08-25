@@ -1,4 +1,0 @@
-diffusers==0.31.0
-torch==2.4.1
-transformers==4.45.2
-accelerate==0.33.0

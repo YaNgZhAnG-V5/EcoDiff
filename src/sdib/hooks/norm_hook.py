@@ -1,16 +1,23 @@
+# Normalization Layer Hooks for FLUX Models
+#
+# Architecture Note: This module implements normalization layer pruning hooks.
+# Future refactoring should consider creating a unified parent class for all
+# hook types (attention, FFN, normalization) to improve code organization
+# and reduce redundancy across the hooking system.
+
 import logging
 import os
 from collections import OrderedDict
 from functools import partial
 
-import diffusers
 import torch
 from torch import nn
 
 import re
+from sdib.utils.utils import hard_concrete_distribution
 
 
-class FeedForwardHooker:
+class NormHooker:
     def __init__(
         self,
         pipeline: nn.Module,
@@ -40,22 +47,33 @@ class FeedForwardHooker:
         self.module_neurons = OrderedDict()
         self.binary = binary  # default, need to discuss if we need to keep this attribute or not
 
-    def add_hooks_to_ff(self, hook_fn: callable):
+    def add_hooks_to_norm(self, hook_fn: callable):
+        """
+        Add forward hooks to every feed forward layer matching the regex
+        :param hook_fn: a callable to be added to torch nn module as a hook
+        :return: dictionary of added hooks
+        """
         total_hooks = 0
         for name, module in self.net.named_modules():
             name_last_word = name.split(".")[-1]
-            if "ff" in name_last_word:
+            if "norm1" in name_last_word or ("norm" == name_last_word and len(name.split(".")) == 3):
                 if re.match(self.regex, name):
                     hook_fn_with_name = partial(hook_fn, name=name)
-                    actual_module = module.net[0]
+
+                    if hasattr(module, "linear"):
+                        actual_module = module.linear
+                    else:
+                        if isinstance(module, nn.Linear):
+                            actual_module = module
+                        else:
+                            continue
+
                     hook = actual_module.register_forward_hook(hook_fn_with_name, with_kwargs=True)
                     self.hook_dict[name] = hook
 
-                    if isinstance(actual_module, diffusers.models.activations.GEGLU):  # geglu
-                        # due to the GEGLU chunking, we need to divide by 2
-                        self.module_neurons[name] = actual_module.proj.out_features // 2
-                    elif isinstance(actual_module, diffusers.models.activations.GELU):  # gelu
-                        self.module_neurons[name] = actual_module.proj.out_features
+                    # AdaLayerNormZero
+                    if isinstance(actual_module, torch.nn.Linear):
+                        self.module_neurons[name] = actual_module.out_features
                     else:
                         raise NotImplementedError(f"Module {name} is not implemented, please check")
                     self.logger.info(f"Adding hook to {name}, neurons: {self.module_neurons[name]}")
@@ -64,8 +82,8 @@ class FeedForwardHooker:
         return self.hook_dict
 
     def add_hooks(self, init_value=1.0):
-        hook_fn = self.get_ff_masking_hook(init_value)
-        self.add_hooks_to_ff(hook_fn)
+        hook_fn = self.get_norm_masking_hook(init_value)
+        self.add_hooks_to_norm(hook_fn)
         # initialize the lambda
         self.lambs = [None] * len(self.hook_dict)
         # initialize the lambda module names
@@ -92,7 +110,7 @@ class FeedForwardHooker:
     def get_lambda_block_names(self):
         return self.lambs_module_names
 
-    def load(self, device, threshold=2.5):
+    def load(self, device, threshold):
         if os.path.exists(self.dst):
             self.logger.info(f"loading lambda from {self.dst}")
             self.lambs = torch.load(self.dst, weights_only=True, map_location=device)
@@ -106,6 +124,15 @@ class FeedForwardHooker:
             self.logger.info("skipping loading, training from scratch")
 
     def binarize(self, scope: str, ratio: float):
+        """
+        Binarize lambda values to 0 or 1 based on scope and sparsity ratio.
+        
+        Performance Note: This implementation duplicates logic from other hook types.
+        Future optimization should extract common binarization utilities to reduce
+        code duplication and improve maintainability.
+        :param scope: either locally (sparsity within layer) or globally (sparsity within model)
+        :param ratio: the ratio of the number of 1s to the total number of elements
+        """
         assert scope in ["local", "global"], "scope must be either local or global"
         assert not self.binary, "binarization is not supported when using binary mask already"
         if scope == "local":
@@ -149,6 +176,10 @@ class FeedForwardHooker:
         lamb = kwargs["lamb"].view(1, 1, kwargs["lamb"].shape[0])
         if kwargs.get("masking", None) == "sigmoid":
             mask = torch.sigmoid(lamb)
+        elif kwargs.get("masking", None) == "hard_discrete":
+            use_log = kwargs.get("use_log", True)
+            eps = kwargs.get("eps", 1e-8)
+            mask = hard_concrete_distribution(lamb, use_log=use_log, eps=eps)
         elif kwargs.get("masking", None) == "binary":
             mask = lamb
         elif kwargs.get("masking", None) == "continues2binary":
@@ -159,10 +190,14 @@ class FeedForwardHooker:
         else:
             raise NotImplementedError
         epsilon = kwargs.get("epsilon", 0.0)
+
+        if hidden_states.dim() == 2:
+            mask = mask.squeeze(1)
+
         hidden_states = hidden_states * mask + torch.randn_like(hidden_states) * epsilon * (1 - mask)
         return hidden_states.to(hidden_states_dtype)
 
-    def get_ff_masking_hook(self, init_value=1.0):
+    def get_norm_masking_hook(self, init_value=1.0):
         """
         Get a hook function to mask feed forward layer
         """
@@ -174,7 +209,7 @@ class FeedForwardHooker:
                     torch.ones(self.module_neurons[name], device=self.pipeline.device, dtype=self.dtype) * init_value
                 )
                 self.lambs[self.hook_counter].requires_grad = True
-                # load ff lambda module name for logging
+                # load norm lambda module name for logging
                 self.lambs_module_names[self.hook_counter] = name
 
             # perform masking
