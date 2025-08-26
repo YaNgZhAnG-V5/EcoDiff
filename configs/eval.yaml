@@ -1,0 +1,66 @@
+base:
+  device: cuda:2
+  seed: [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50]
+  experiment_name: sample_100_beta_7_epochs_3_lr_0.5_batch_size_4_l0_regex_.*_masking_hard_discrete
+  model: sdxl
+  save_pt: ./results/prune_results/latest_lambda.pt
+  mix_precision: bf16
+  num_intervention_steps: 50
+  output_dir: ./results
+
+semantic_eval:
+  task: all
+  device: ${base.device}
+  seed: ${base.seed}
+  save_dir: ./results/tmp_imagenet/${base.experiment_name}
+  model: ${base.model}
+  clip_backbone: ViT-B-16
+  clip_pretrained: laion400m_e32
+  mix_precision: ${base.mix_precision}
+  num_intervention_steps: ${base.num_intervention_steps}
+  save_pth: ${base.save_pt}
+
+binary_mask_eval:
+  prompt:
+    - a cat
+    - a dog
+    - a man
+    - a girl
+    - dog with picasso style
+    - cat with picasso style
+    - man with picasso style
+    - girl with picasso style
+    - dog with dali style
+    - cat with dali style
+    - man with dali style
+    - girl with dali style
+    - dog with cubism style
+    - cat with cubism style
+    - man with cubism style
+    - girl with cubism style
+  ckpt: ${base.save_pt}
+  device: ${base.device}
+  seed: ${base.seed}
+  mix_precision: ${base.mix_precision}
+  num_intervention_steps: ${base.num_intervention_steps}
+  model: ${base.model}
+
+
+attn_map_eval:
+  prompt: a gril with picasso style
+  save_pt: ${base.save_pt}
+  device: ${base.device}
+  seed: ${base.seed}
+  attn_block_idx:
+    - 0
+    - -1
+  timestep:
+    - 4
+    - 10
+    - 20
+    - 25
+    - 49
+  model: ${base.model}
+  torch_dtype: ${base.mix_precision}
+  all_heatmap: False
+  output_dir: ${base.output_dir}

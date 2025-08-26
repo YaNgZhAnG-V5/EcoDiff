@@ -1,0 +1,75 @@
+data:
+  save_dir: datasets/flux_dev/${logger.notes}
+  metadata: datasets/gcc3m/Validation_GCC-1.1.0-Validation.tsv
+  size: 100
+  batch_size: 1
+
+trainer:
+  epochs: 4
+  beta: 0.01
+  epsilon: 0.
+  lr: 5e-1
+  attn_lr: 0.5
+  ff_lr: 0.1
+  n_lr: 0.5
+  model: flux_dev # [sd1, sd2, sdxl, sd3, flux, flux_dev, dit]
+  device: "cuda:0"
+  num_intervention_steps: 50
+  seed: 48
+  init_lambda: 3
+  regex: ".*" # "^(down_blocks.[1,2]).*" # optional are ^(down_blocks).*, ^(up_blocks).*, .* (for all heads)
+  attn_name: attn # use to filter the attention heads, e.g. attn2 only for cross attention
+  head_num_filter: 1 # number of heads to filter, apply lambda to the layter that has more than head_num_filter heads
+  masking: "hard_discrete" # [sigmoid, hard_discrete]
+  masking_eps: 0.1
+  use_log: false
+  precision: 'bf16' # [fp16, bf16]
+  disable_progress_bar: true
+  accumulate_grad_batches: 4 # batch size
+  grad_checkpointing: true # prefered for large models or large num_intervention_steps
+
+lr_scheduler:
+  type: "constant" # [linear, cosine, cosine_with_restarts, constant, polynomial]
+  warmup_steps: 10 # helps to start with a lower learning rate
+  num_cycles: 1
+  power: 1.0
+  decay_steps: 0
+
+loss:
+  reg: 1 # 2 for L2 norm, 1 for L1 norm, 0 for L0 norm
+  reconstruct: 2 # 2 for L2 norm, 1 for L1 norm
+  use_attn_reg: true
+  use_ffn_reg: true
+  mean: true
+  lambda_reg: True
+  reg_alpha: 0.4
+  reg_beta: 1
+
+logger:
+  output_dir: "results"
+  log_dir: "csv"
+  type: "wandb" # [wandb, csv]
+  plot_interval: 10
+  project: "flux_dev_debug"
+  notes: model_${trainer.model}_eps_${trainer.masking_eps}_sample_${data.size}_beta_${trainer.beta}_epochs_${trainer.epochs}_lr_${trainer.attn_lr}${trainer.ff_lr}${trainer.n_lr}_batch_size_${trainer.accumulate_grad_batches}_loss_${loss.reconstruct}${loss.reg}_regex_${trainer.regex}_masking_${trainer.masking}
+  tags:
+    - "large_blocks_lambda_only"
+    - "beta_${trainer.beta}"
+    - "recon_norm_${loss.reconstruct}"
+    - "reg_norm_${loss.reg}"
+  save_lambda_path:
+    attn: results/${logger.project}/${logger.notes}/latest_lambda.pt
+    ffn: ${logger.save_lambda_path.attn}
+    norm: ${logger.save_lambda_path.attn}
+
+accelerator:
+  gradient_accumulation_steps: 1
+  mixed_precision: False
+  report_to: ${logger.type}
+
+debug: true
+debug_cfg:
+  data.size: 4
+  logger.plot_interval: 4
+  trainer.num_intervention_steps: 50
+  logger.type: "csv"

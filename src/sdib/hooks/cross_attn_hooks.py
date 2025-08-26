@@ -6,178 +6,12 @@ from functools import partial
 import torch
 
 import re
+from sdib.hooks.attention_processor import (
+    AttnProcessor2_0_Masking,
+    FluxAttnProcessor2_0_Masking,
+    JointAttnProcessor2_0_Masking,
+)
 
-import math
-from typing import Optional
-
-import torch
-import torch.nn.functional as F
-from diffusers.models.attention_processor import Attention
-from diffusers.utils import deprecate
-
-
-def scaled_dot_product_attention_atten_weight_only(
-    query, key, attn_mask=None, dropout_p=0.0, is_causal=False, scale=None
-) -> torch.Tensor:
-    L, S = query.size(-2), key.size(-2)
-    scale_factor = 1 / math.sqrt(query.size(-1)) if scale is None else scale
-    attn_bias = torch.zeros(L, S, dtype=query.dtype, device=query.device)
-    if is_causal:
-        assert attn_mask is None
-        temp_mask = torch.ones(L, S, dtype=torch.bool).tril(diagonal=0)
-        attn_bias.masked_fill_(temp_mask.logical_not(), float("-inf"))
-        attn_bias.to(query.dtype)
-
-    if attn_mask is not None:
-        if attn_mask.dtype == torch.bool:
-            attn_bias.masked_fill_(attn_mask.logical_not(), float("-inf"))
-        else:
-            attn_bias += attn_mask
-    attn_weight = query @ key.transpose(-2, -1) * scale_factor
-    attn_weight += attn_bias
-    attn_weight = torch.softmax(attn_weight, dim=-1)
-    attn_weight = torch.dropout(attn_weight, dropout_p, train=True)
-    return attn_weight
-
-
-def apply_rope(xq, xk, freqs_cis):
-    xq_ = xq.float().reshape(*xq.shape[:-1], -1, 1, 2)
-    xk_ = xk.float().reshape(*xk.shape[:-1], -1, 1, 2)
-    xq_out = freqs_cis[..., 0] * xq_[..., 0] + freqs_cis[..., 1] * xq_[..., 1]
-    xk_out = freqs_cis[..., 0] * xk_[..., 0] + freqs_cis[..., 1] * xk_[..., 1]
-    return xq_out.reshape(*xq.shape).type_as(xq), xk_out.reshape(*xk.shape).type_as(xk)
-
-
-def masking_fn(hidden_states, kwargs):
-    lamb = kwargs["lamb"].view(1, kwargs["lamb"].shape[0], 1, 1)
-    if kwargs.get("masking", None) == "sigmoid":
-        mask = torch.sigmoid(lamb)
-    elif kwargs.get("masking", None) == "binary":
-        mask = lamb
-    elif kwargs.get("masking", None) == "continues2binary":
-        # TODO: this might cause potential issue as it hard threshold at 0
-        mask = (lamb > 0).float()
-    elif kwargs.get("masking", None) == "no_masking":
-        mask = torch.ones_like(lamb)
-    else:
-        raise NotImplementedError
-    epsilon = kwargs.get("epsilon", 0.0)
-    hidden_states = hidden_states * mask + torch.randn_like(hidden_states) * epsilon * (1 - mask)
-    return hidden_states
-
-
-class AttnProcessor2_0_Masking:
-    r"""
-    Processor for implementing scaled dot-product attention (enabled by default if you're using PyTorch 2.0).
-    """
-
-    def __init__(self):
-        if not hasattr(F, "scaled_dot_product_attention"):
-            raise ImportError("AttnProcessor2_0 requires PyTorch 2.0, to use it, please upgrade PyTorch to 2.0.")
-
-    def __call__(
-        self,
-        attn: Attention,
-        hidden_states: torch.Tensor,
-        encoder_hidden_states: Optional[torch.Tensor] = None,
-        attention_mask: Optional[torch.Tensor] = None,
-        temb: Optional[torch.Tensor] = None,
-        *args,
-        **kwargs,
-    ):
-        if len(args) > 0 or kwargs.get("scale", None) is not None:
-            deprecation_message = (
-                "The `scale` argument is deprecated and will be ignored. "
-                "Please remove it, as passing it will raise an error "
-                "in the future. `scale` should directly be passed while "
-                "calling the underlying pipeline component i.e., via "
-                "`cross_attention_kwargs`."
-            )
-            deprecate("scale", "1.0.0", deprecation_message)
-
-        residual = hidden_states
-        if attn.spatial_norm is not None:
-            hidden_states = attn.spatial_norm(hidden_states, temb)
-
-        input_ndim = hidden_states.ndim
-
-        if input_ndim == 4:
-            batch_size, channel, height, width = hidden_states.shape
-            hidden_states = hidden_states.view(batch_size, channel, height * width).transpose(1, 2)
-
-        batch_size, sequence_length, _ = (
-            hidden_states.shape if encoder_hidden_states is None else encoder_hidden_states.shape
-        )
-
-        if attention_mask is not None:
-            attention_mask = attn.prepare_attention_mask(attention_mask, sequence_length, batch_size)
-            # scaled_dot_product_attention expects attention_mask shape to be
-            # (batch, heads, source_length, target_length)
-            attention_mask = attention_mask.view(batch_size, attn.heads, -1, attention_mask.shape[-1])
-
-        if attn.group_norm is not None:
-            hidden_states = attn.group_norm(hidden_states.transpose(1, 2)).transpose(1, 2)
-
-        query = attn.to_q(hidden_states)
-
-        if encoder_hidden_states is None:
-            encoder_hidden_states = hidden_states
-        elif attn.norm_cross:
-            encoder_hidden_states = attn.norm_encoder_hidden_states(encoder_hidden_states)
-
-        key = attn.to_k(encoder_hidden_states)
-        value = attn.to_v(encoder_hidden_states)
-
-        inner_dim = key.shape[-1]
-        head_dim = inner_dim // attn.heads
-
-        query = query.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2)
-
-        key = key.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2)
-        value = value.view(batch_size, -1, attn.heads, head_dim).transpose(1, 2)
-
-        if getattr(attn, "norm_q", None) is not None:
-            query = attn.norm_q(query)
-        
-        if getattr(attn, "norm_k", None) is not None:
-            key = attn.norm_k(key)
-
-        hidden_states = F.scaled_dot_product_attention(
-            query, key, value, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
-        )
-
-        if kwargs.get("return_attention", True):
-            # add the attention output from F.scaled_dot_product_attention
-            attn_weight = scaled_dot_product_attention_atten_weight_only(
-                query, key, attn_mask=attention_mask, dropout_p=0.0, is_causal=False
-            )
-            hidden_states_aft_attention_ops = hidden_states.clone()
-            attn_weight_old = attn_weight.to(hidden_states.device).clone()
-        else:
-            hidden_states_aft_attention_ops = None
-            attn_weight_old = None
-
-        # masking for the hidden_states after the attention ops
-        if kwargs.get("lamb", None) is not None:
-            hidden_states = masking_fn(hidden_states, kwargs)
-
-        hidden_states = hidden_states.transpose(1, 2).reshape(batch_size, -1, attn.heads * head_dim)
-        hidden_states = hidden_states.to(query.dtype)
-
-        # linear proj
-        hidden_states = attn.to_out[0](hidden_states)
-        # dropout
-        hidden_states = attn.to_out[1](hidden_states)
-
-        if input_ndim == 4:
-            hidden_states = hidden_states.transpose(-1, -2).reshape(batch_size, channel, height, width)
-
-        if attn.residual_connection:
-            hidden_states = hidden_states + residual
-
-        hidden_states = hidden_states / attn.rescale_output_factor
-
-        return hidden_states, hidden_states_aft_attention_ops, attn_weight_old
 
 class BaseCrossAttentionHooker:
     def __init__(self, pipeline, regex, dtype, head_num_filter, masking, model_name, attn_name, use_log, eps):
@@ -223,6 +57,12 @@ class BaseCrossAttentionHooker:
 
 
 class CrossAttentionExtractionHook(BaseCrossAttentionHooker):
+    """
+    Note: The naming convention uses "Cross Attention" for historical reasons,
+    but this class handles both self-attention and cross-attention mechanisms.
+    Future refactoring may simplify the naming to "Attention" for clarity.
+    """
+
     def __init__(
         self,
         pipeline,
@@ -250,7 +90,12 @@ class CrossAttentionExtractionHook(BaseCrossAttentionHooker):
             use_log=use_log,
             eps=eps,
         )
-        self.attention_processor = AttnProcessor2_0_Masking()
+        if model_name in ["flux", "flux_dev"]:
+            self.attention_processor = FluxAttnProcessor2_0_Masking()
+        elif model_name == "sd3":
+            self.attention_processor = JointAttnProcessor2_0_Masking()
+        else:
+            self.attention_processor = AttnProcessor2_0_Masking()
         self.lambs = []
         self.lambs_module_names = []
         self.cross_attn = []
@@ -295,6 +140,11 @@ class CrossAttentionExtractionHook(BaseCrossAttentionHooker):
             self.logger.info("skipping loading, training from scratch")
 
     def binarize(self, scope: str, ratio: float):
+        """
+        binarize lambda to be 0 or 1
+        :param scope: either locally (sparsity within layer) or globally (sparsity within model)
+        :param ratio: the ratio of the number of 1s to the total number of elements
+        """
         assert scope in ["local", "global"], "scope must be either local or global"
         assert not self.binary, "binarization is not supported when using binary mask already"
         if scope == "local":
@@ -361,23 +211,89 @@ class CrossAttentionExtractionHook(BaseCrossAttentionHooker):
                 # load attn lambda module name for logging
                 self.lambs_module_names[self.hook_counter] = name
 
-            hidden_states, _, attention_output = self.attention_processor(
-                module,
-                args[0],
-                encoder_hidden_states=kwargs["encoder_hidden_states"],
-                attention_mask=kwargs["attention_mask"],
-                lamb=self.lambs[self.hook_counter],
-                masking=self.masking,
-                epsilon=self.epsilon,
-                return_attention=self.return_attention,
-                use_log=self.use_log,
-                eps=self.eps,
-            )
-            if attention_output is not None:
-                self.cross_attn.append(attention_output)
-            self.hook_counter += 1
-            self.hook_counter %= len(self.lambs)
-            return hidden_states
+            if self.model_name == "sd3":
+                encoder_hidden_states = kwargs.get("encoder_hidden_states", None)
+                if encoder_hidden_states is None:
+                    hidden_states = self.attention_processor(
+                        module,
+                        hidden_states=kwargs["hidden_states"],
+                        lamb=self.lambs[self.hook_counter],
+                        masking=self.masking,
+                        epsilon=self.epsilon,
+                        use_log=self.use_log,
+                        eps=self.eps,
+                    )
+                else:
+                    hidden_states, encoder_hidden_states = self.attention_processor(
+                        module,
+                        hidden_states=kwargs["hidden_states"],
+                        encoder_hidden_states=kwargs["encoder_hidden_states"],
+                        attention_mask=kwargs.get("attention_mask", None),
+                        lamb=self.lambs[self.hook_counter],
+                        masking=self.masking,
+                        epsilon=self.epsilon,
+                        use_log=self.use_log,
+                        eps=self.eps,
+                    )
+                self.hook_counter += 1
+                self.hook_counter %= len(self.lambs)
+                if encoder_hidden_states is None:
+                    return hidden_states
+                else:
+                    return hidden_states, encoder_hidden_states
+            elif self.model_name in ["flux", "flux_dev"]:
+                encoder_hidden_states = kwargs.get("encoder_hidden_states", None)
+                # flux has two different attention processors, FluxSingleAttnProcessor and FluxAttnProcessor
+                if "single" in name:
+                    hidden_states = self.attention_processor(
+                        module,
+                        hidden_states=kwargs.get("hidden_states", None),
+                        encoder_hidden_states=encoder_hidden_states,
+                        attention_mask=kwargs.get("attention_mask", None),
+                        image_rotary_emb=kwargs.get("image_rotary_emb", None),
+                        lamb=self.lambs[self.hook_counter],
+                        masking=self.masking,
+                        epsilon=self.epsilon,
+                        use_log=self.use_log,
+                        eps=self.eps,
+                    )
+                    self.hook_counter += 1
+                    self.hook_counter %= len(self.lambs)
+                    return hidden_states
+                else:
+                    hidden_states, encoder_hidden_states = self.attention_processor(
+                        module,
+                        hidden_states=kwargs.get("hidden_states", None),
+                        encoder_hidden_states=encoder_hidden_states,
+                        attention_mask=kwargs.get("attention_mask", None),
+                        image_rotary_emb=kwargs.get("image_rotary_emb", None),
+                        lamb=self.lambs[self.hook_counter],
+                        masking=self.masking,
+                        epsilon=self.epsilon,
+                        use_log=self.use_log,
+                        eps=self.eps,
+                    )
+                    self.hook_counter += 1
+                    self.hook_counter %= len(self.lambs)
+                    return hidden_states, encoder_hidden_states
+            else:
+                hidden_states, _, attention_output = self.attention_processor(
+                    module,
+                    args[0],
+                    encoder_hidden_states=kwargs["encoder_hidden_states"],
+                    attention_mask=kwargs["attention_mask"],
+                    lamb=self.lambs[self.hook_counter],
+                    masking=self.masking,
+                    epsilon=self.epsilon,
+                    return_attention=self.return_attention,
+                    use_log=self.use_log,
+                    eps=self.eps,
+                )
+                if attention_output is not None:
+                    self.cross_attn.append(attention_output)
+                self.hook_counter += 1
+                self.hook_counter %= len(self.lambs)
+                return hidden_states
 
         return hook_fn
 
@@ -390,6 +306,30 @@ class CrossAttentionExtractionHook(BaseCrossAttentionHooker):
         self.lambs_module_names = [None] * len(self.module_heads)
 
     def get_process_cross_attn_result(self, text_seq_length, timestep: int = -1):
+        """
+        this method is used to extract and preprocess the cross attention map
+
+        all attention maps are stored in self.cross_attn as a list of tensors
+        total length of self.cross_attn is num_lambda_block * num_timesteps
+        each tensor in the list is of shape [batch, num_heads, seq_vis_tokens, seq_text_tokens]
+        e.g. for sdxl 'down_blocks.1.attentions.0.transformer_blocks.0.attn2' block contains
+        10 heads, the shape of the tensor is [2, 12, 4096, 77]
+
+        e.g. for sdxl model applying masking on all attention blocks with number of intervention steps 50,
+        the length of self.cross_attn is 50 * 70 (total number of blocks in UNET from sdxl) 3500
+
+        :param num_tokens: the number of tokens in the text sequence
+        :param timestep: t in the paper, the timestep to extract the cross attention map, t in [0, T-1]
+                         as number of intervention steps
+        return: a dictionary containing the extracted cross attention map for timestep t
+                {
+                    #  number of heads * number of tokens x (reshape heatmap 64x64x1)
+                    block_name1: [heatmap1, heatmap2, ...],
+                    block_name2: [heatmap1, heatmap2, ...],
+                    num_lambda_block: num_lambda_block
+                    lambda_list: lambda_list
+                }
+        """
         if isinstance(timestep, str):
             timestep = int(timestep)
         # num_lambda_block contains lambda (head masking)
