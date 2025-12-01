@@ -3,7 +3,7 @@
 <p align="center">
   <a href="https://arxiv.org/abs/2412.02852"><img src="https://img.shields.io/badge/arXiv-2412.02852-b31b1b.svg" alt="arXiv"></a>
   <a href="https://yangzhang-v5.github.io/EcoDiff"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a>
-  <a href="#model-weights"><img src="https://img.shields.io/badge/🤗-Model%20Weights-yellow.svg" alt="Model Weights"></a>
+  <a href="#-model-weights"><img src="https://img.shields.io/badge/🤗-Model%20Weights-yellow.svg" alt="Model Weights"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python">
 </p>
@@ -17,9 +17,8 @@ Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** -
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#overview">Overview</a></li>
-    <li><a href="#installation">Installation</a></li>
-    <li><a href="#quick-start">Quick Start</a></li>
-    <li><a href="#supported-models">Supported Models</a></li>
+    <li><a href="#%EF%B8%8F-installation">Installation</a></li>
+    <li><a href="#-quick-start">Quick Start</a></li>
     <li><a href="#advanced-usage">Advanced Usage</a>
       <ul>
         <li><a href="#pruning-training">Pruning Training</a></li>
@@ -28,11 +27,13 @@ Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** -
         <li><a href="#fine-tuning-after-pruning">Fine-tuning After Pruning</a></li>
       </ul>
     </li>
+    <li><a href="#configuration-files">Configuration Files</a></li>
+    <li><a href="#%EF%B8%8F-development">Development</a></li>
     <li><a href="#repository-structure">Repository Structure</a></li>
-    <li><a href="#development">Development</a></li>
-    <li><a href="#model-weights">Model Weights</a></li>
-    <li><a href="#citation">Citation</a></li>
-    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#supported-models">Supported Models</a></li>
+    <li><a href="#-model-weights">Model Weights</a></li>
+    <li><a href="#-citation">Citation</a></li>
+    <li><a href="#license">License</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
