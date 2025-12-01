@@ -127,6 +127,7 @@ def create_pipeline(
     return_hooker=False,
     scope=None,
     ratio=None,
+    legacy_mode=False,
 ):
     """
     create the pipeline and optionally load the saved mask
@@ -165,6 +166,7 @@ def create_pipeline(
                 dst=save_pts["ff"],
                 epsilon=epsilon,
                 binary=binary,
+                legacy_mode=legacy_mode
             )
             ff_hooker.add_hooks(init_value=1)
 
@@ -177,6 +179,7 @@ def create_pipeline(
                     dst=save_pts["norm"],
                     epsilon=epsilon,
                     binary=binary,
+                    legacy_mode=legacy_mode
                 )
                 norm_hooker.add_hooks(init_value=1)
             else:

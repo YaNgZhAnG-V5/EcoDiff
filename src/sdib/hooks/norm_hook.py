@@ -29,6 +29,7 @@ class NormHooker:
         eps: float = 1e-6,
         use_log: bool = False,
         binary: bool = False,
+        legacy_mode: bool = False,
     ):
         self.pipeline = pipeline
         self.net = pipeline.unet if hasattr(pipeline, "unet") else pipeline.transformer
@@ -45,7 +46,8 @@ class NormHooker:
         self.lambs_module_names = []  # store the module names for each lambda block
         self.hook_counter = 0
         self.module_neurons = OrderedDict()
-        self.binary = binary  # default, need to discuss if we need to keep this attribute or not
+        self.binary = binary
+        self.legacy_mode = legacy_mode
 
     def add_hooks_to_norm(self, hook_fn: callable):
         """
@@ -56,7 +58,8 @@ class NormHooker:
         total_hooks = 0
         for name, module in self.net.named_modules():
             name_last_word = name.split(".")[-1]
-            if "norm1" in name_last_word or ("norm" == name_last_word and len(name.split(".")) == 3):
+            if (self.legacy_mode and "norm1_context" == name_last_word) or \
+                (not self.legacy_mode and ("norm1" in name_last_word or ("norm" == name_last_word and len(name.split(".")) == 3))):
                 if re.match(self.regex, name):
                     hook_fn_with_name = partial(hook_fn, name=name)
 
