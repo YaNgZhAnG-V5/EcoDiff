@@ -1,12 +1,12 @@
-# SDIB: Core Pruning Framework ✂️🤖
+# SDIB: Core Pruning Framework
 
 This directory contains the core implementation of the EcoDiff pruning framework for diffusion models.
 
-## Purpose 🎯
+## Purpose
 
 Provides the main components for learning differentiable masks to prune diffusion model parameters with minimal performance loss.
 
-## Structure 🏠
+## Structure 
 
 - **[`data/`](./data/)** - Dataset classes for training and evaluation
 - **[`models/`](./models/)** - Pipeline implementations (SDXL, FLUX, SD3, DiT)  
@@ -15,7 +15,7 @@ Provides the main components for learning differentiable masks to prune diffusio
 - **[`scheduler/`](./scheduler/)** - Custom schedulers for pruned models
 - **[`evaluation/`](./evaluation/)** - Performance evaluation tools
 
-## Framework Overview 🔍
+## 🔍 Framework Overview 
 
 SDIB implements learnable structural pruning for diffusion models through three key mechanisms:
 
@@ -45,7 +45,7 @@ pipeline = create_pipeline("sdxl", device="cuda", torch_dtype=torch.float16)
 # 5. Optional: Fine-tune pruned model for performance recovery
 ```
 
-### Supported Architectures 🤝
+### Supported Architectures
 - **SDXL**: Stable Diffusion XL
 - **FLUX**: FLUX.1 Schnell/Dev 
 - **SD3**: Stable Diffusion 3

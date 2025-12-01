@@ -1,17 +1,17 @@
-# Scheduler Module 📅⚙️
+# Scheduler Module
 
 Custom schedulers optimized for pruned diffusion models.
 
-## Purpose 🎯
+## Purpose
 
 Provides enhanced sampling methods and noise scheduling strategies adapted for sparse model architectures.
 
-## Components 🧩
+## Components 
 
 - **`dpm.py`** - Custom DPM solver with pruning optimizations
   - `ReverseDPMSolverMultistepScheduler` - Enhanced DPM++ solver
 
-## Usage 💡
+## 💡 Usage 
 
 ```python
 from sdib.scheduler import ReverseDPMSolverMultistepScheduler

@@ -1,25 +1,25 @@
-# Hooks Module 🎣✂️
+# ✂️ Hooks Module
 
 Core pruning mechanism through learnable hooks that apply sparse masks to diffusion model layers.
 
-## Purpose 🎯
+## Purpose
 
 Implements the main pruning functionality by applying learnable masks to attention and feed-forward layers during inference.
 
-## Hook Classes 🔧
+## 🔧 Hook Classes 
 
 - **`CrossAttentionExtractionHook`** - Learnable masks for attention layers
 - **`FeedForwardHooker`** - Structured pruning of MLP layers  
 - **`NormHooker`** - Optional normalization layer pruning
 - **Custom Attention Processors** - Modified attention with masking support
 
-## Mask Types 🎭
+## Mask Types
 
 - **`hard_discrete`** - Binary masks with straight-through gradients
 - **`sigmoid`** - Continuous masks (0-1 range)
 - **`gumbel_softmax`** - Differentiable discrete approximation
 
-## Usage 💡
+## 💡 Usage 
 
 ```python
 import torch

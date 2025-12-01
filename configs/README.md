@@ -1,12 +1,12 @@
-# Configuration Files ⚙️📄
+# ⚙️ Configuration Files 
 
 YAML configuration files for different diffusion model architectures and training scenarios.
 
-## Purpose 🎯
+## Purpose
 
 Provides model-specific configurations for the EcoDiff pruning framework with support for various diffusion architectures.
 
-## Configuration Files 📚
+## 📚 Configuration Files 
 
 - **`sdxl.yaml`** - Stable Diffusion XL configuration
 - **`flux.yaml`** - FLUX.1 Schnell model configuration  
@@ -18,7 +18,7 @@ Provides model-specific configurations for the EcoDiff pruning framework with su
 - **`validation_prompts.yaml`** - Standard validation prompts
 - **`validation_prompts_small.yaml`** - Reduced validation prompt set
 
-## Usage 💡
+## 💡 Usage 
 
 ```bash
 # Use specific configuration
@@ -28,7 +28,7 @@ python scripts/train.py --cfg configs/sdxl.yaml
 python scripts/train.py --cfg configs/flux.yaml --trainer.epochs 10 --data.size 500
 ```
 
-## Key Sections 🗺️
+## Key Sections 
 
 Each config contains:
 - **`data`** - Dataset parameters  

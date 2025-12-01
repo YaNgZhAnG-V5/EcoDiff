@@ -1,12 +1,12 @@
-# Utils Module 🔧✨
+# 🔧 Utils Module
 
 Comprehensive utility functions for diffusion model pruning, pipeline management, and training workflows.
 
-## Purpose 🎯
+## Purpose
 
 Provides the core infrastructure for EcoDiff's pruning framework, including model analysis, pipeline creation, training utilities, and evaluation tools.
 
-## Key Components 🧩
+## Key Components
 
 ### `utils.py` - Core Pruning and Model Operations
 
@@ -80,7 +80,7 @@ Provides the core infrastructure for EcoDiff's pruning framework, including mode
 - Various pretrained weight options (LAION, OpenAI, etc.)
 - Automatic error handling for invalid configurations
 
-## Usage Examples 💡
+## 💡 Usage Examples 
 
 ### Basic Pipeline Creation
 ```python
