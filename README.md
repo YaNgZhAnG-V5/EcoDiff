@@ -38,6 +38,7 @@ Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** -
 </details>
 
 ## Overview 🚀
+![method](images/method.png)
 
 EcoDiff introduces a model-agnostic structural pruning framework that learns differentiable masks to sparsify diffusion models. Key innovations include:
 
@@ -46,7 +47,6 @@ EcoDiff introduces a model-agnostic structural pruning framework that learns dif
 - 🧵 **Time step gradient checkpointing** for memory-efficient training
 - 📉 **Up to 20% parameter reduction** with minimal performance loss
 
-![method](images/method.png)
 
 ## Installation ⚙️
 
