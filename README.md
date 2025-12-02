@@ -11,6 +11,8 @@ Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** -
   <strong>📄 Paper: <a href="https://arxiv.org/abs/2412.02852">arXiv:2412.02852</a> • 🌐 Project Page: <a href="https://yangzhang-v5.github.io/EcoDiff">yangzhang-v5.github.io/EcoDiff</a></strong>
 </p>
 
+![teaser](images/teaser.png)
+
 ## Table of Contents 📚
 <details>
   <summary>Table of Contents</summary>
@@ -44,8 +46,7 @@ EcoDiff introduces a model-agnostic structural pruning framework that learns dif
 - 🧵 **Time step gradient checkpointing** for memory-efficient training
 - 📉 **Up to 20% parameter reduction** with minimal performance loss
 
-> [!TIP]
-> **Why EcoDiff?** Drop inference cost while preserving generative fidelity—ideal for rapid iteration and deployment.
+![method](images/method.png)
 
 ## Installation ⚙️
 
