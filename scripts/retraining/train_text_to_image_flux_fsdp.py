@@ -1320,6 +1320,34 @@ def main(args):
         for child in mod.children():
             _move_custom_tensors_to_device(child, device)
 
+    # Potentially load in the weights and states from a previous save
+    if args.resume_from_checkpoint:
+        if args.resume_from_checkpoint != "latest":
+            path = os.path.basename(args.resume_from_checkpoint)
+        else:
+            # Get the mos recent checkpoint
+            dirs = os.listdir(args.output_dir)
+            dirs = [d for d in dirs if d.startswith("checkpoint")]
+            dirs = sorted(dirs, key=lambda x: int(x.split("-")[1]))
+            path = dirs[-1] if len(dirs) > 0 else None
+
+        if path is None:
+            accelerator.print(
+                f"Checkpoint '{args.resume_from_checkpoint}' does not exist. Starting a new training run."
+            )
+            args.resume_from_checkpoint = None
+        else:
+            accelerator.print(f"Loading from checkpoint {path}")
+
+            # Load state dict (assume target device and dtype)
+            state_dict = load_file(os.path.join(args.output_dir, path, "transformer", SAFETENSORS_WEIGHTS_NAME))
+            transformer.load_state_dict(state_dict)
+            transformer.to("cpu")
+            transformer.to(torch.float32)
+
+            del state_dict
+            gc.collect()
+
     # Prepare everything with our `accelerator`.
     if args.train_text_encoder:
         (
@@ -1402,7 +1430,7 @@ def main(args):
             initial_global_step = 0
         else:
             accelerator.print(f"Resuming from checkpoint {path}")
-            accelerator.load_state(os.path.join(args.output_dir, path))
+            # accelerator.load_state(os.path.join(args.output_dir, path))
             global_step = int(path.split("-")[1])
 
             initial_global_step = global_step

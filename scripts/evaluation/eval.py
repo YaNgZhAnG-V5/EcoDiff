@@ -7,7 +7,7 @@ import glob
 import os
 
 from binary_mask_eval import binary_mask_eval
-from generate_attn_map import attn_map_eval
+from ..analysis.generate_attn_map import attn_map_eval
 from omegaconf import OmegaConf
 from semantic_eval import semantic_eval
 

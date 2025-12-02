@@ -1,12 +1,12 @@
-# Models Module 🌐📊
+# Models Module
 
 Pipeline implementations for different diffusion architectures with pruning support.
 
-## Purpose 🎯
+## Purpose
 
 Provides specialized pipeline classes that extend standard Diffusers pipelines with gradient-aware inference for pruning mask training.
 
-## Pipeline Classes 🔧
+## Pipeline Classes
 
 - **`SDIBDiffusionPipeline`** - Stable Diffusion v1/v2
 - **`SDXLDiffusionPipeline`** - Stable Diffusion XL  
@@ -14,7 +14,7 @@ Provides specialized pipeline classes that extend standard Diffusers pipelines w
 - **`DiTIBPipeline`** - Diffusion Transformers
 - **`FluxIBPipeline`** - FLUX models
 
-## Usage 💡
+## 💡 Usage 
 
 ```python
 from sdib.models import SDXLDiffusionPipeline

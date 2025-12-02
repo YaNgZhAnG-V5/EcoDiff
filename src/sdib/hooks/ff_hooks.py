@@ -23,6 +23,7 @@ class FeedForwardHooker:
         eps: float = 1e-6,
         use_log: bool = False,
         binary: bool = False,
+        legacy_mode: bool = False,
     ):
         self.pipeline = pipeline
         self.net = pipeline.unet if hasattr(pipeline, "unet") else pipeline.transformer
@@ -39,7 +40,8 @@ class FeedForwardHooker:
         self.lambs_module_names = []  # store the module names for each lambda block
         self.hook_counter = 0
         self.module_neurons = OrderedDict()
-        self.binary = binary  # default, need to discuss if we need to keep this attribute or not
+        self.binary = binary
+        self.legacy_mode = legacy_mode
 
     def add_hooks_to_ff(self, hook_fn: callable):
         """
@@ -74,7 +76,7 @@ class FeedForwardHooker:
                     self.logger.info(f"Adding hook to {name}, neurons: {self.module_neurons[name]}")
                     total_hooks += 1
             
-            elif "single_transformer_blocks" in name and name_last_word.isdecimal() and hasattr(module, "proj_mlp"):
+            elif not self.legacy_mode and "single_transformer_blocks" in name and name_last_word.isdecimal() and hasattr(module, "proj_mlp"):
                 # FFN For FluxSingleTransformerBlock
                 hook_fn_with_name = partial(hook_fn, name=name)
 

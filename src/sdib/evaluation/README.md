@@ -1,16 +1,16 @@
-# Evaluation Module 📊🏆
+# 📊 Evaluation Module 
 
 Performance evaluation tools for measuring the impact of pruning on diffusion models.
 
-## Purpose 🎯
+## Purpose
 
 Provides tools for evaluating model performance, measuring computational efficiency, and analyzing pruning effectiveness.
 
-## Components 🧩
+## Components
 
 - **`size_runtime.py`** - Model performance profiling (size, speed, memory usage)
 
-## Usage 💡
+## 💡 Usage 
 
 ```python
 from sdib.evaluation import (

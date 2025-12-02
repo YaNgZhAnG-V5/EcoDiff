@@ -1,26 +1,26 @@
-# EcoDiff: Low-Cost Pruning of Diffusion Models ✂️🌀
+# EcoDiff: Low-Cost Pruning of Diffusion Models
 
-<!-- Badges / decorative (adjust or remove if not desired) -->
 <p align="center">
-  <strong>🔥 Efficient • 🧠 Model-Agnostic • ⚡ Low-Cost • 🌱 Eco-Friendly</strong>
+  <a href="https://arxiv.org/abs/2412.02852"><img src="https://img.shields.io/badge/arXiv-2412.02852-b31b1b.svg" alt="arXiv"></a>
+  <a href="https://yangzhang-v5.github.io/EcoDiff"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a>
+  <a href="#-model-weights"><img src="https://img.shields.io/badge/🤗-Model%20Weights-yellow.svg" alt="Model Weights"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python">
 </p>
 
 Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** - a novel approach for memory efficient diffusion model pruning.
 
-<p align="center">
-  <strong>📄 Paper: <a href="https://arxiv.org/abs/2412.02852">arXiv:2412.02852</a> • 🌐 Project Page: <a href="https://yangzhang-v5.github.io/EcoDiff">yangzhang-v5.github.io/EcoDiff</a></strong>
-</p>
+> **TL;DR:** A model-agnostic structural pruning framework that achieves up to 20% parameter reduction with minimal performance loss through differentiable mask learning and time step gradient checkpointing.
 
 ![teaser](images/teaser.png)
 
-## Table of Contents 📚
+## Table of Contents 
 <details>
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#overview">Overview</a></li>
-    <li><a href="#installation">Installation</a></li>
-    <li><a href="#quick-start">Quick Start</a></li>
-    <li><a href="#supported-models">Supported Models</a></li>
+    <li><a href="#%EF%B8%8F-installation">Installation</a></li>
+    <li><a href="#-quick-start">Quick Start</a></li>
     <li><a href="#advanced-usage">Advanced Usage</a>
       <ul>
         <li><a href="#pruning-training">Pruning Training</a></li>
@@ -29,15 +29,18 @@ Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** -
         <li><a href="#fine-tuning-after-pruning">Fine-tuning After Pruning</a></li>
       </ul>
     </li>
+    <li><a href="#configuration-files">Configuration Files</a></li>
+    <li><a href="#%EF%B8%8F-development">Development</a></li>
     <li><a href="#repository-structure">Repository Structure</a></li>
-    <li><a href="#development">Development</a></li>
-    <li><a href="#citation">Citation</a></li>
-    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#supported-models">Supported Models</a></li>
+    <li><a href="#-model-weights">Model Weights</a></li>
+    <li><a href="#-citation">Citation</a></li>
+    <li><a href="#license">License</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
 
-## Overview 🚀
+## Overview 
 ![method](images/method.png)
 
 EcoDiff introduces a model-agnostic structural pruning framework that learns differentiable masks to sparsify diffusion models. Key innovations include:
@@ -48,28 +51,28 @@ EcoDiff introduces a model-agnostic structural pruning framework that learns dif
 - 📉 **Up to 20% parameter reduction** with minimal performance loss
 
 
-## Installation ⚙️
+## ⚙️ Installation 
 
-### Requirements ✅
-- 🐍 Python 3.10+
-- 📦 Anaconda or Miniconda
-- 🖥️ CUDA-compatible GPU
+### Requirements 
+- Python 3.10+
+- Anaconda or Miniconda
+- CUDA-compatible GPU
 
-### Setup 🔧
+### Setup 
 ```bash
-# Create conda environment 🧬
+# Create conda environment
 conda create -n sdib python=3.10 -y
 conda activate sdib
 
-# Clone repository ⬇️
+# Clone repository
 git clone https://github.com/your-repo/ecodiff.git
 cd ecodiff
 
-# Install dependencies 📦
+# Install dependencies
 pip install -e .[core,loggers,test]
 ```
 
-### Environment Configuration 🗂️
+### Environment Configuration 
 Create a `.env` file:
 ```bash
 PYTHON=/path/to/miniconda3/envs/sdib/bin/python
@@ -77,12 +80,9 @@ RESULTS_DIR=/path/to/ecodiff/results
 CONFIG_DIR=/path/to/ecodiff/configs
 ```
 
-> [!IMPORTANT]
-> Ensure RESULTS_DIR has enough disk space for checkpoints and logs.
+## 🚀 Quick Start
 
-## Quick Start ⚡
-
-### 1. Basic Pruning ✂️
+### 1. Basic Pruning 
 ```bash
 # SDXL pruning
 make visual cfg=sdxl
@@ -91,7 +91,7 @@ make visual cfg=sdxl
 make visual cfg=flux
 ```
 
-### 2. Hyperparameter Tuning 🎯
+### 2. Hyperparameter Tuning 
 ```bash
 # Generate configurations
 python scripts/utils/hyperparameter_tuning.py --config configs/sdxl.yaml --task gen
@@ -100,7 +100,7 @@ python scripts/utils/hyperparameter_tuning.py --config configs/sdxl.yaml --task 
 python scripts/utils/hyperparameter_tuning.py --task run --max_job 2
 ```
 
-### 3. Evaluation 🧪
+### 3. Evaluation 
 ```bash
 # Semantic evaluation
 python scripts/evaluation/semantic_eval.py -sp <checkpoint_path> --task all
@@ -109,12 +109,9 @@ python scripts/evaluation/semantic_eval.py -sp <checkpoint_path> --task all
 python scripts/evaluation/binary_mask_eval.py --ckpt <checkpoint_path> -lt 0.001
 ```
 
-> [!CAUTION]
-> Replace `<checkpoint_path>` with your actual checkpoint path before running evaluation commands.
+## Advanced Usage 
 
-## Advanced Usage 🧠
-
-### Pruning Training 🏋️
+### Pruning Training 
 ```bash
 # Direct training script
 python scripts/train.py
@@ -124,7 +121,7 @@ make visual cfg=sdxl
 make visual cfg=flux
 ```
 
-### Hyperparameter Tuning 🔍
+### Hyperparameter Tuning 
 ```bash
 # Generate configuration files
 python scripts/utils/hyperparameter_tuning.py \
@@ -147,7 +144,7 @@ python scripts/utils/hyperparameter_tuning.py \
   --max_job 2
 ```
 
-### Evaluation 📊
+### Evaluation
 ```bash
 # Generate semantic evaluation
 python scripts/evaluation/semantic_eval.py -sp <checkpoint_path> --task gen
@@ -159,7 +156,7 @@ python scripts/evaluation/semantic_eval.py -sp <checkpoint_path> --task all
 python scripts/evaluation/binary_mask_eval.py --ckpt <checkpoint_path> -lt 0.001
 ```
 
-### Fine-tuning After Pruning 🩹
+### Fine-tuning After Pruning 
 ```bash
 # SDXL LoRA fine-tuning
 bash scripts/retraining/train_text_to_image_lora_sdxl.sh 30 0
@@ -168,12 +165,12 @@ bash scripts/retraining/train_text_to_image_lora_sdxl.sh 30 0
 bash scripts/retraining/train_text_to_image_lora_flux.sh 30 0
 ```
 
-### Load Pruned Models 📦
+### Load Pruned Models 
 ```bash
 python scripts/load_pruned_model.py
 ```
 
-## Configuration Files 🗃️
+## Configuration Files 
 
 The framework uses YAML configuration files located in the `configs/` directory:
 
@@ -187,7 +184,7 @@ configs/
 └── sdxl.yaml         # Stable Diffusion XL configuration
 ```
 
-## Development 🛠️
+## 🛠️ Development
 
 For developers contributing to the project:
 
@@ -195,23 +192,23 @@ For developers contributing to the project:
 # Install development dependencies
 pip install pre-commit && pre-commit install
 
-# Run tests ✅
+# Run tests
 make test
 
-# Format code 🧼
+# Format code
 make format
 
-# Clean generated files 🧹
+# Clean generated files
 make clean
 ```
 
-## Repository Structure 🧭
+## Repository Structure 
 
 - [`src/sdib/`](src/sdib/) - Core pruning framework
 - [`scripts/`](scripts/) - Training and evaluation scripts  
 - [`configs/`](configs/) - Model configuration files
 
-## Supported Models 🤝
+## Supported Models 
 
 - **SDXL**: Stable Diffusion XL
 - **FLUX**: FLUX diffusion models
@@ -219,7 +216,18 @@ make clean
 - **DiT**: Diffusion Transformers
 - **SD2**: Stable Diffusion v2
 
-## Citation 📑
+## 🤗 Model Weights
+
+Pre-trained pruned models and retrained weights are available on HuggingFace:
+
+| Model | Type | Link |
+|-------|------|------|
+| SDXL | Pruned | [EcoDiff-SDXL-Pruned](https://huggingface.co/LWZ19/ecodiff_sdxl_prune/tree/main) |
+| FLUX (Schnell & Dev) | Pruned | [EcoDiff-FLUX-Pruned](https://huggingface.co/LWZ19/ecodiff_flux_prune/tree/main) |
+| SDXL | Retrained (Full & LoRA) | [EcoDiff-SDXL-Retrain-Weights](https://huggingface.co/LWZ19/ecodiff_sdxl_retrain_weights/tree/main) |
+| FLUX | Retrained (LoRA) | [EcoDiff-FLUX-Retrain-Weights](https://huggingface.co/LWZ19/ecodiff_flux_retrain_weights/tree/main) |
+
+## 📝 Citation
 ```bibtex
 @article{zhang2024ecodiff,
   title={EcoDiff: Low-Cost Pruning of Diffusion Models},
@@ -229,11 +237,10 @@ make clean
 }
 ```
 
-## License 📄
+## License 
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments 🙏
+## Acknowledgments
 - Built on [Diffusers](https://github.com/huggingface/diffusers) library
 - Supports models from [Stability AI](https://stability.ai/) and [Black Forest Labs](https://blackforestlabs.ai/)
-- ❤️ Community feedback welcome—open issues & PRs appreciated

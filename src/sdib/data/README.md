@@ -1,12 +1,12 @@
-# Data Module 📊💾
+# 📊 Data Module 
 
 Dataset classes for training and evaluating diffusion model pruning.
 
-## Purpose 🎯
+## Purpose
 
 Provides specialized dataset classes for different diffusion models and evaluation tasks.
 
-## Dataset Classes 📚
+## Dataset Classes
 
 - **`PromptImageDataset`** - Text-to-image generation with metadata support
 - **`ConceptDataset`** & **`DeConceptDataset`** - Concept-specific generation/removal
@@ -14,7 +14,7 @@ Provides specialized dataset classes for different diffusion models and evaluati
 - **`ImageNetDataset`** - ImageNet integration for evaluation
 - **`EvalDataset`** - Standardized evaluation dataset
 
-## Usage 💡
+## 💡 Usage 
 
 ```python
 from sdib.data import PromptImageDataset, DiTDataset
