@@ -1,4 +1,4 @@
-# EcoDiff: Low-Cost Pruning of Diffusion Models
+# [ICLR2026] Learnable Sparsity for Vision Generative Models
 
 <p align="center">
   <a href="https://arxiv.org/abs/2412.02852"><img src="https://img.shields.io/badge/arXiv-2412.02852-b31b1b.svg" alt="arXiv"></a>
@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python">
 </p>
 
-Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** - a novel approach for memory efficient diffusion model pruning.
+Official implementation of ICLR2026 **"Learnable Sparsity for Vision Generative Models"** - a novel approach for memory efficient diffusion model pruning.
 
 > **TL;DR:** A model-agnostic structural pruning framework that achieves up to 20% parameter reduction with minimal performance loss through differentiable mask learning and time step gradient checkpointing.
 
