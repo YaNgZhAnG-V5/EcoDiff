@@ -5,7 +5,7 @@
   <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
   <!-- Replace the content tag with appropriate information -->
   <meta name="description" content="EcoDiff: A model-agnostic structural pruning framework for diffusion models that achieves efficient pruning without retraining through end-to-end optimization and time step gradient checkpointing.">
-  <meta property="og:title" content="Effortless Efficiency: Low-Cost Pruning of Diffusion Models"/>
+  <meta property="og:title" content="Learnable Sparsity for Vision Generative Models"/>
   <meta property="og:description" content="A novel pruning method that can reduce diffusion model parameters by up to 20% without retraining, demonstrated on SDXL and FLUX models."/>
   <meta property="og:url" content="https://yangzhang-v5.github.io/EcoDiff"/>
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
@@ -14,7 +14,7 @@
   <meta property="og:image:height" content="630"/>
 
 
-  <meta name="twitter:title" content="Effortless Efficiency: Low-Cost Pruning of Diffusion Models">
+  <meta name="twitter:title" content="Learnable Sparsity for Vision Generative Models">
   <meta name="twitter:description" content="A novel pruning method that can reduce diffusion model parameters by up to 20% without retraining, demonstrated on SDXL and FLUX models.">
   <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
   <meta name="twitter:image" content="static/images/demo_figures.jpg">
@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Effortless Efficiency: Low-Cost Pruning of Diffusion Models</title>
+  <title>Learnable Sparsity for Vision Generative Models</title>
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -44,7 +44,7 @@
   <script src="static/js/bulma-slider.min.js"></script>
   <script src="static/js/index.js"></script>
   <!-- MathJax for LaTeX equations -->
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
   <script id="MathJax-script" async
       src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   </script>
@@ -81,7 +81,10 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Effortless Efficiency:<br>Low-Cost Pruning of Diffusion Models</h1>
+            <h1 class="title is-1 publication-title">Learnable Sparsity for Vision Generative Models</h1>
+            <div class="is-size-3 publication-venue" style="font-weight: bold; color: #555; margin: 0 auto 20px auto;">
+              ICLR 2026
+            </div>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
@@ -89,17 +92,19 @@
                 <span class="author-block">
                   <a href="#" target="_blank">Er Jin</a><sup>2,*</sup>,</span>
                   <span class="author-block">
-                    <a href="#" target="_blank">Yanfei Dong</a><sup>1</sup>,</span>
+                    <a href="#" target="_blank">Wenzhong Liang</a><sup>1,*</sup>,</span>
                     <span class="author-block">
-                      <a href="#" target="_blank">Ashkan Khakzar</a><sup>3</sup>,</span>
+                      <a href="#" target="_blank">Yanfei Dong</a><sup>1</sup>,</span>
                       <span class="author-block">
-                        <a href="#" target="_blank">Philip Torr</a><sup>3</sup>,</span>
+                        <a href="#" target="_blank">Ashkan Khakzar</a><sup>3</sup>,</span>
                         <span class="author-block">
-                          <a href="#" target="_blank">Johannes Stegmaier</a><sup>2</sup>,</span>
+                          <a href="#" target="_blank">Philip Torr</a><sup>3</sup>,</span>
                           <span class="author-block">
-                            <a href="#" target="_blank">Kenji Kawaguchi</a><sup>1</sup>
-                          </span>
-                        </div>
+                            <a href="#" target="_blank">Johannes Stegmaier</a><sup>2</sup>,</span>
+                            <span class="author-block">
+                              <a href="#" target="_blank">Kenji Kawaguchi</a><sup>1</sup>
+                            </span>
+                          </div>
 
                         <div class="is-size-5 publication-authors">
                           <span class="author-block">
@@ -173,22 +178,21 @@
     <div class="container">
       
       <div id="results-carousel">
-       <div class="item">
+        <div class="item">
         <!-- Your image here -->
         
-        <center></center>
-          <img src="static/images/demo_figures.jpg" alt="MY ALT TEXT"/>
+        <center>
+          <img src="static/images/demo_figures.jpg" alt="Demo Figures"/>
         </center>
         
         <h4 class="subtitle is-6 has-text-centered" style="margin-top: 0.5em; color: gray; font-size: small;"">
              Results on Pruned SDXL and FLUX. <b>No retraining</b> is performed after pruning.
         </h4>
-      </div>
       
+        </div>
+      </div>
     </div>
   </div>
-</div>
-</div>
 </section>
 <!-- End teaser video -->
 <!-- Teaser video-->
@@ -216,19 +220,17 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Diffusion models have achieved impressive advancements in various vision tasks. However, these gains often rely on increasing model size, 
-            which escalates computational complexity and memory demands, complicating deployment, raising inference costs, and causing environmental impact. 
+            Generative models have achieved impressive advancements in various vision tasks. However, these gains often rely on increasing model size, 
+            which raises computational complexity and memory demands. The increased computational demand poses challenges for deployment, elevates inference costs, and impacts the environment. 
             While some studies have explored pruning techniques to improve the memory efficiency of diffusion models, 
-            most existing methods require extensive retraining to retain the model performance. 
-            Retraining a modern large diffusion model is extremely costly and resource-intensive, which limits the practicality of these methods.
-            In this work, we achieve <b>low-cost diffusion pruning without retraining</b> by proposing a 
-            model-agnostic structural pruning framework for diffusion models that learns a differentiable mask to sparsify the model. 
-            To ensure effective pruning that preserves the quality of the final denoised latent, we design a novel <b>end-to-end pruning</b> objective 
-            that spans the entire diffusion process. As end-to-end pruning is memory-intensive, we further propose <b>time step gradient checkpointing</b>, 
-            a technique that significantly reduces memory usage during optimization, enabling end-to-end pruning within a limited memory budget.
-            Results on <b>state-of-the-art</b> U-Net diffusion models <b>SDXL</b> and diffusion transformers (<b>FLUX</b>) demonstrate that our method can 
-            effectively prune up to <b>20%</b> parameters with minimal perceptible performance degradation—and notably, without the need for model retraining. 
-            We also showcase that our method can still prune on top of time step distilled diffusion models.
+            most existing methods require extensive retraining to maintain model performance. 
+            Retraining a large model is extremely costly and resource-intensive, which limits the practicality of pruning methods.
+            In this work, we achieve <b>low-cost pruning</b> by proposing a general pruning framework for vision generative models that learns a differentiable mask to sparsify the model. 
+            To learn a mask that minimally deteriorates the model, we design a novel <b>end-to-end pruning</b> objective 
+            that spans the entire generation process over all steps. Since end-to-end pruning is memory-intensive, we further design a <b>time step gradient checkpointing</b> 
+            technique for the end-to-end pruning, a technique that significantly reduces memory usage during optimization, enabling end-to-end pruning within a limited 
+            memory budget. Results on the <b>state-of-the-art</b> U-Net diffusion models <b>SDXL</b> and DiT flow models (<b>FLUX</b>) show that our method efficiently 
+            prunes <b>20%</b> of parameters in just 10 A100 GPU hours, outperforming previous pruning approaches.
           </p>
         </div>
       </div>
@@ -274,24 +276,23 @@
               To make optimization tractable, we apply a continuous relaxation of the discrete masks using hard-concrete distributions, 
               allowing gradient-based optimization of continuous mask variables \(\boldsymbol{\lambda}\). 
               The continuous mask \(\hat{\mathcal{M}}\) is then obtained by a mask parameter \(\boldsymbol{\lambda}\). 
-              The final pruning loss given mask parameters \(\boldsymbol{\lambda}\) becomes:
+              The \(L_0\) complexity loss \(\mathcal{L}_0\) given the hard-concrete parameter \(\boldsymbol{\lambda}\) can be described as:
             </p>
-            <!-- <div class="equation">
-                \[
-                \begin{align}
-                    s & = \sigma\left( \frac{\log(u + \delta) - \log(1 - u + \delta)  + \lambda}{\alpha} \right),\\
-                    \bar{s} &= s (\zeta - \gamma) + \gamma, \\
-                    \hat{\mathcal{M}} &= \min(1, \max(0, \bar{s})).
-                \end{align}
-                \]
-            </div> -->
             <div class="equation">
               \[
-              \mathcal{L}(\boldsymbol{\lambda}) = \mathcal{L}_E(\boldsymbol{\lambda}) + \beta \| \boldsymbol{\lambda} \|_1,
+              \mathcal{L}_0(\boldsymbol{\lambda}) = \sum_{j=1}^{|\boldsymbol{\lambda}|} \text{Sigmoid} \left( \lambda_j - \alpha \log \frac{-\gamma}{\zeta} \right),
               \]
             </div>
             <p>
-              where \(\mathcal{L}_E\) is the reconstruction loss between \(z_0\) and \(\hat{z}_0\), and \(\| \boldsymbol{\lambda} \|_1\) approximates the sparsity penalty. After optimization, we threshold \(\boldsymbol{\lambda}\) to obtain the final discrete masks \(\boldsymbol{\mathcal{M}}\), achieving effective structural pruning.
+              where \(\alpha\), \(\gamma\), and \(\zeta\) differrentiable hyperparameters controlling the distribution. The end-to-end pruning loss for \(\boldsymbol{\lambda}\) is formulated as:
+            </p>
+            <div class="equation">
+              \[
+              \mathcal{L}(\boldsymbol{\lambda}) = \mathcal{L}_E(\boldsymbol{\lambda}) + \beta \mathcal{L}_0(\boldsymbol{\lambda}),
+              \]
+            </div>
+            <p>
+              where \(\mathcal{L}_E\) is the reconstruction loss between \(z_0\) and \(\hat{z}_0\). After optimization, we threshold \(\boldsymbol{\lambda}\) to obtain the final discrete masks \(\boldsymbol{\mathcal{M}}\), achieving effective structural pruning.
             </p>
             <h2>Time Step Gradient Checkpointing</h2>
             <p>
@@ -384,15 +385,23 @@
 
             <h3 class="title is-4">Retraining After Pruning</h3>
             <p>
-              While our pruning method effectively maintains model performance without necessitating retraining, we also explore the benefits of light retraining to achieve even greater compression. Specifically, we conduct an experiment where we retrain a pruned SDXL model for 10,000 steps using only 100 training samples. This minimal retraining effort, which requires approximately 12 hours on an A100 GPU, allows the model to adjust to the pruned architecture and enhances its performance. The results show that even with such a modest retraining regimen, the model can further improve in efficiency without compromising image quality, highlighting the potential of combining pruning with targeted retraining for optimal results.            </p>
+              While our pruning method effectively maintains model performance without necessitating retraining, we also explore the benefits of retraining to achieve even greater compression. Though our method achieves effective pruning with <b>no retraining</b>, we show that with light retraining, the pruned model can heal the performance loss. Hence, our method can incorporate post-pruning retraining to further prune the model.
+              We investigate two strategies: <b>LoRA fine-tuning</b> and <b>Full model retraining</b>. Both are trained for 10,000 steps, taking approximately 10 hours on an A100 GPU. This retraining effort allows the model to adjust to the pruned architecture and enhances its performance. The results show that even with such a modest retraining regimen, the model can further improve in efficiency without compromising image quality, highlighting the potential of combining pruning with targeted retraining for optimal results.
+            </p>
             <div class="columns is-centered">
-              <div class="column is-8">
+              <div class="column is-12">
                 <div class="content has-text-centered">
                   <div class="columns is-centered">
                     <div class="column">
-                      <img src="static/images/retrain.jpg" alt="retrain" style="width: 100%;">
+                      <img src="static/images/lora_retrain.jpg" alt="lora retrain" style="width: 100%;">
                       <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
-                        Pruning after retraining. Though our method achieves effective pruning with <b>no retraining</b>, we show that with light retraining, the pruned model can heal the performance loss. Hence, our method can incoorperate post-pruning retraining to further prune the model.
+                        <i>LoRA</i> Retraining: With light retraining (100 samples), the pruned model can heal performance loss.
+                      </h4>
+                    </div>
+                    <div class="column">
+                      <img src="static/images/full_retrain.jpg" alt="full retrain" style="width: 100%;">
+                      <h4 class="subtitle is-6 has-text-centered" style="color: gray; font-size: small;">
+                        <i>Full</i> Retraining: With full retraining (10,000 samples), we can recover performance with higher pruning ratios.
                       </h4>
                     </div>
                   </div>
@@ -526,14 +535,12 @@
   <section class="section" id="BibTeX">
     <div class="container is-max-desktop content">
       <h2 class="title">BibTeX</h2>
-      <pre><code>@misc{zhang2024effortlessefficiencylowcostpruning,
-      title={Effortless Efficiency: Low-Cost Pruning of Diffusion Models}, 
-      author={Yang Zhang and Er Jin and Yanfei Dong and Ashkan Khakzar and Philip Torr and Johannes Stegmaier and Kenji Kawaguchi},
-      year={2024},
-      eprint={2412.02852},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2412.02852}, 
+      <pre><code>@inproceedings{zhang2026learnable,
+      title={Learnable Sparsity for Vision Generative Models},
+      author={Zhang, Yang and Jin, Er and Liang, Wenzhong and Dong, Yanfei and Khakzar, Ashkan and Torr, Philip and Stegmaier, Johannes and Kawaguchi, Kenji},
+      booktitle={The Fourteenth International Conference on Learning Representations},
+      year={2026},
+      url={https://openreview.net/forum?id=9pNWZLVZ4r}
 }</code></pre>
     </div>
 </section>
@@ -562,7 +569,7 @@
   
 <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
 
-    <!-- End of Statcounter Code -->
+<!-- End of Statcounter Code -->
 
-  </body>
-  </html>
+</body>
+</html>
