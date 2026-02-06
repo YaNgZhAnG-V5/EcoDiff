@@ -1,4 +1,4 @@
-# [ICLR2026] Learnable Sparsity for Vision Generative Models
+# Learnable Sparsity for Vision Generative Models
 
 > **Authors:** Yang Zhang, Er Jin, Wenzhong Liang, Yanfei Dong, Ashkan Khakzar, Philip Torr, Johannes Stegmaier, Kenji Kawaguchi
 
