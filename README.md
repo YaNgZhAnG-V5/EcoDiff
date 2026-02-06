@@ -1,4 +1,4 @@
-# EcoDiff: Low-Cost Pruning of Diffusion Models
+# [ICLR2026] Learnable Sparsity for Vision Generative Models
 
 > **Authors:** Yang Zhang, Er Jin, Wenzhong Liang, Yanfei Dong, Ashkan Khakzar, Philip Torr, Johannes Stegmaier, Kenji Kawaguchi
 
@@ -10,7 +10,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
 </p>
 
-Official implementation of **"EcoDiff: Low-Cost Pruning of Diffusion Models"** - a novel approach for memory efficient diffusion model pruning.
+Official implementation of ICLR2026 **"Learnable Sparsity for Vision Generative Models"** - a novel approach for memory efficient diffusion model pruning.
 
 > **TL;DR:** A model-agnostic structural pruning framework that achieves up to 20% parameter reduction with minimal performance loss through differentiable mask learning and time step gradient checkpointing.
 
