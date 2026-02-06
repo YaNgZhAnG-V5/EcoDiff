@@ -6,6 +6,7 @@
   <a href="https://iclr.cc/Conferences/2026"><img src="https://img.shields.io/badge/ICLR-2026-blue.svg" alt="ICLR 2026"></a>
   <a href="https://arxiv.org/abs/2412.02852"><img src="https://img.shields.io/badge/arXiv-2412.02852-b31b1b.svg" alt="arXiv"></a>
   <a href="https://openreview.net/forum?id=9pNWZLVZ4r"><img src="https://img.shields.io/badge/OpenReview-ICLR-orange.svg" alt="OpenReview"></a>
+  <a href="https://yangzhang-v5.github.io/EcoDiff"><img src="https://img.shields.io/badge/Project-Page-blueviolet.svg" alt="Project Page"></a>
   <a href="#-model-weights"><img src="https://img.shields.io/badge/🤗-Model%20Weights-yellow.svg" alt="Model Weights"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
 </p>
