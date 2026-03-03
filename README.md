@@ -1,11 +1,14 @@
-# [ICLR2026] Learnable Sparsity for Vision Generative Models
+# Learnable Sparsity for Vision Generative Models
+
+> **Authors:** Yang Zhang, Er Jin, Wenzhong Liang, Yanfei Dong, Ashkan Khakzar, Philip Torr, Johannes Stegmaier, Kenji Kawaguchi
 
 <p align="center">
+  <a href="https://iclr.cc/Conferences/2026"><img src="https://img.shields.io/badge/ICLR-2026-blue.svg" alt="ICLR 2026"></a>
   <a href="https://arxiv.org/abs/2412.02852"><img src="https://img.shields.io/badge/arXiv-2412.02852-b31b1b.svg" alt="arXiv"></a>
-  <a href="https://yangzhang-v5.github.io/EcoDiff"><img src="https://img.shields.io/badge/Project-Page-blue.svg" alt="Project Page"></a>
+  <a href="https://openreview.net/forum?id=9pNWZLVZ4r"><img src="https://img.shields.io/badge/OpenReview-ICLR-orange.svg" alt="OpenReview"></a>
+  <a href="https://yangzhang-v5.github.io/EcoDiff"><img src="https://img.shields.io/badge/Project-Page-blueviolet.svg" alt="Project Page"></a>
   <a href="#-model-weights"><img src="https://img.shields.io/badge/🤗-Model%20Weights-yellow.svg" alt="Model Weights"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"></a>
-  <img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" alt="Python">
 </p>
 
 Official implementation of ICLR2026 **"Learnable Sparsity for Vision Generative Models"** - a novel approach for memory efficient diffusion model pruning.
@@ -32,7 +35,7 @@ Official implementation of ICLR2026 **"Learnable Sparsity for Vision Generative 
     <li><a href="#configuration-files">Configuration Files</a></li>
     <li><a href="#%EF%B8%8F-development">Development</a></li>
     <li><a href="#repository-structure">Repository Structure</a></li>
-    <li><a href="#supported-models">Supported Models</a></li>
+    <li><a href="#models">Models</a></li>
     <li><a href="#-model-weights">Model Weights</a></li>
     <li><a href="#-citation">Citation</a></li>
     <li><a href="#license">License</a></li>
@@ -208,13 +211,17 @@ make clean
 - [`scripts/`](scripts/) - Training and evaluation scripts  
 - [`configs/`](configs/) - Model configuration files
 
-## Supported Models 
+## Models 
 
+### Supported
 - **SDXL**: Stable Diffusion XL
-- **FLUX**: FLUX diffusion models
-- **SD3**: Stable Diffusion 3
+- **FLUX.1**: FLUX diffusion models
+
+### Experimental
+These models are currently experimental implementations. They may require additional hyperparameter tuning for optimal performance.
 - **DiT**: Diffusion Transformers
 - **SD2**: Stable Diffusion v2
+- **SD3**: Stable Diffusion 3
 
 ## 🤗 Model Weights
 
@@ -229,11 +236,12 @@ Pre-trained pruned models and retrained weights are available on HuggingFace:
 
 ## 📝 Citation
 ```bibtex
-@article{zhang2024ecodiff,
-  title={EcoDiff: Low-Cost Pruning of Diffusion Models},
-  author={Zhang, Yang and Jin, Er and Dong, Yanfei and Khakzar, Ashkan and Torr, Philip and Stegmaier, Johannes and Kawaguchi, Kenji},
-  journal={arXiv preprint arXiv:2412.02852},
-  year={2024}
+@inproceedings{zhang2026learnable,
+  title={Learnable Sparsity for Vision Generative Models},
+  author={Zhang, Yang and Jin, Er and Liang, Wenzhong and Dong, Yanfei and Khakzar, Ashkan and Torr, Philip and Stegmaier, Johannes and Kawaguchi, Kenji},
+  booktitle={The Fourteenth International Conference on Learning Representations},
+  year={2026},
+  url={https://openreview.net/forum?id=9pNWZLVZ4r}
 }
 ```
 
